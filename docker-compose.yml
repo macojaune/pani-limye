@@ -1,0 +1,31 @@
+services:
+  api:
+    platform: linux/x86_64
+    image: ghcr.io/macojaune/pani-limye:main
+    ports:
+      - "4444:3000"
+    environment:
+      - TURSO_DB_URL=http://db:8080
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  db:
+    image: ghcr.io/tursodatabase/libsql-server:latest
+    environment:
+      - LIBSQL_DATABASE_PATH=/data/data.db
+      - HTTP_LISTEN_ADDR=0.0.0.0:8080
+    volumes:
+      - db-data:/data
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+volumes:
+  db-data:
+
+networks:
+  app-network:
+    driver: bridge
